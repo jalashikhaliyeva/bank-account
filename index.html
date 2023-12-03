@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style> 
+    .bg {   
+        background-color: black;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div
+      class=" bg d-flex justify-content-between align-items-center p-5"
+    >
+      <img
+        
+        src="data:image/png;base64,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"
+      />
+
+      <h3 class="text-white">Balance: <span id="balanceEl">$ 1000</span></h3>
+    </div>
+
+    <main class="container p-5">
+      <input
+        id="moneyInput"
+        class="form-control form-control-lg"
+        type="number"
+        placeholder="Amount ... "
+      />
+      <div class="mt-5 d-flex justify-content-center">
+        <div class="btn-group mx-auto" role="group" aria-label="Basic example">
+          <button type="button" id="incrementBtn" class="btn btn-dark btn-lg">
+          Cash in
+          </button>
+          <button type="button" id="decrementBtn" class="btn btn-dark btn-lg">
+          Withdraw
+          </button>
+          <!-- <button type="button" id="showBtn" class="btn btn-dark btn-lg">
+            Goster
+          </button> -->
+        </div>
+      </div>
+
+      <table class="table table-striped border my-5">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Type</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Time</th>
+          </tr>
+        </thead>
+        <tbody id="list">
+          <!-- <tr>
+            <th scope="row">1</th>
+            <td>Cash</td>
+            <td class="text-success">+100</td>
+            <td>12.11.2023</td>
+          </tr> -->
+        </tbody>
+      </table>
+    </main>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
