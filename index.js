@@ -3,43 +3,101 @@ const moneyInput = document.querySelector("#moneyInput");
 const incrementBtn = document.querySelector("#incrementBtn");
 const decrementBtn = document.querySelector("#decrementBtn");
 const list = document.querySelector("#list");
+const paymentBtn = document.querySelector("#paymentBtn");
 
 const bankAcc = {
   total: 1000,
   data: [],
 
   adding: function (amount) {
-    if (amount > 0 && amount !== null && amount !== "") {
-      amount = parseFloat(amount);
-      if (amount > 0) {
-        this.total += amount;
-        balanceEl.innerHTML = `$${this.total}`;
-        history1.call(this, "Cash", amount);
-        alert(`New total balance: $${this.total}`);
-      } else {
-        alert("Invalid cash-in amount. Amount must be greater than 0.");
-      }
-    } else {
-      alert("Invalid input or operation canceled.");
+    if (this.validateAmount(amount)) {
+      this.total += amount;
+      this.updateBalance();
+      this.history("Cash", amount);
+      alert(`New total balance: $${this.total}`);
     }
   },
 
   withdraw: function (amount) {
-    if (amount > 0 && amount !== null && amount !== "") {
-      amount = parseFloat(amount);
-      if (amount > 0 && amount <= this.total) {
-        this.total -= amount;
-        balanceEl.innerHTML = `$${this.total}`;
-        history1.call(this, "Withdraw", -amount);
-        alert(`New total balance: $${this.total}`);
-      } else {
-        alert(
-          "Invalid withdraw amount. Amount must be greater than 0, less or equal to your balance."
-        );
-      }
-    } else {
-      alert("Invalid input or operation canceled.");
+    if (this.validateAmount(amount) && this.validateWithdrawal(amount)) {
+      this.total -= amount;
+      this.updateBalance();
+      this.history("Withdraw", -amount);
+      alert(`New total balance: $${this.total}`);
     }
+  },
+
+  payment: function (amount) {
+    if (this.validateAmount(amount) && this.validatePayment(amount)) {
+      const cashBack = this.calculateCashback(amount);
+      this.total -= amount;
+      this.updateBalance();
+      this.history("Payment", -amount);
+      this.history("Cashback", cashBack, "success");
+      alert(`New total balance: $${this.total}`);
+    }
+  },
+
+  calculateCashback: function (amount) {
+    return amount * 0.03;
+  },
+
+  validateAmount: function (amount) {
+    amount = parseFloat(amount);
+    if (isNaN(amount) || amount <= 0) {
+      alert("Invalid amount. Please enter a valid positive number.");
+      return false;
+    }
+    return true;
+  },
+
+  validateWithdrawal: function (amount) {
+    if (amount > this.total) {
+      alert("Invalid withdrawal amount. Amount must be less than or equal to your balance.");
+      return false;
+    }
+    return true;
+  },
+
+  validatePayment: function (amount) {
+    if (amount > this.total) {
+      alert("Invalid payment amount. Amount must be less than or equal to your balance.");
+      return false;
+    }
+    return true;
+  },
+
+  updateBalance: function () {
+    balanceEl.innerHTML = `$${this.total}`;
+  },
+
+  history: function (type, amount, color) {
+    const historyItem = {
+      type: type,
+      amount: amount,
+      created: new Date().toLocaleString(),
+      color: color || (amount < 0 ? "danger" : "success"),
+    };
+    this.data.push(historyItem);
+
+    const newContent = this.data
+      .slice()
+      .reverse()
+      .map(
+        (item, index) =>
+          `<tr>
+              <th scope="row">${index + 1}</th>
+              <td>${item.type}</td>
+              <td class="text-${item.color}">${
+            item.amount.toFixed(2) > 0
+              ? `+$${item.amount.toFixed(2)}`
+              : item.amount.toFixed(2)
+          }</td>
+              <td>${item.created}</td>
+          </tr>`
+      )
+      .join("");
+    list.innerHTML = newContent;
   },
 };
 
@@ -55,28 +113,8 @@ decrementBtn.addEventListener("click", function () {
   moneyInput.value = "";
 });
 
-function history1(type, amount) {
-  const history = {
-    type: type,
-    amount: amount,
-    created: new Date().toLocaleString(),
-  };
-  this.data.push(history);
-
-  const newContent = this.data
-    .slice()
-    .reverse()
-    .map(
-      (item, index) =>
-        `<tr>
-            <th scope="row">${index + 1}</th>
-            <td>${item.type}</td>
-            <td class="text-${
-              item.type === "Withdraw" ? "danger" : "success"
-            }">${item.amount > 0 ? `+${item.amount}` : item.amount}</td>
-            <td>${item.created}</td>
-        </tr>`
-    )
-    .join("");
-  list.innerHTML = newContent;
-}
+paymentBtn.addEventListener("click", function () {
+  const value = moneyInput.value;
+  bankAcc.payment(value);
+  moneyInput.value = "";
+});
