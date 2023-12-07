@@ -4,10 +4,12 @@ const incrementBtn = document.querySelector("#incrementBtn");
 const decrementBtn = document.querySelector("#decrementBtn");
 const list = document.querySelector("#list");
 const paymentBtn = document.querySelector("#paymentBtn");
+const cashbackEl = document.querySelector("#cashbackEl");
 
 const bankAcc = {
   total: 1000,
   data: [],
+  cashback: 0,
 
   adding: function (amount) {
     if (this.validateAmount(amount)) {
@@ -31,11 +33,16 @@ const bankAcc = {
     if (this.validateAmount(amount) && this.validatePayment(amount)) {
       const cashBack = this.calculateCashback(amount);
       this.total -= amount;
+      this.cashback += cashBack;
       this.updateBalance();
+      this.updateCashback();
       this.history("Payment", -amount);
       this.history("Cashback", cashBack, "success");
       alert(`New total balance: $${this.total}`);
     }
+  },
+  updateCashback : function(){
+    cashbackEl.innerHTML = `$${this.cashback.toFixed(2)}`;
   },
 
   calculateCashback: function (amount) {
@@ -53,7 +60,9 @@ const bankAcc = {
 
   validateWithdrawal: function (amount) {
     if (amount > this.total) {
-      alert("Invalid withdrawal amount. Amount must be less than or equal to your balance.");
+      alert(
+        "Invalid withdrawal amount. Amount must be less than or equal to your balance."
+      );
       return false;
     }
     return true;
@@ -61,7 +70,9 @@ const bankAcc = {
 
   validatePayment: function (amount) {
     if (amount > this.total) {
-      alert("Invalid payment amount. Amount must be less than or equal to your balance.");
+      alert(
+        "Invalid payment amount. Amount must be less than or equal to your balance."
+      );
       return false;
     }
     return true;
